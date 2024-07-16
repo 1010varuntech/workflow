@@ -2,24 +2,25 @@ from fastapi import FastAPI, Request, status
 from routes.routes import router as api_router
 from config.db import connect_mongodb
 import uvicorn
+from dotenv import dotenv_values
 from supertokens_python import init, InputAppInfo, SupertokensConfig
 from supertokens_python.recipe import session
 from fastapi.responses import JSONResponse
 from supertokens_python.recipe.session.exceptions import UnauthorisedError, TryRefreshTokenError
 from fastapi.responses import JSONResponse
-
+config = dotenv_values(".env")
 
 init(
     app_info=InputAppInfo(
         app_name="authBackend",
-        api_domain="http://localhost:5000",
-        website_domain="http://localhost:3000",
+        api_domain=config["APIDOMAIN"],
+        website_domain=config["WEBSITEDOMAIN"],
         api_base_path="/auth",
         website_base_path="/auth"
     ),
     supertokens_config=SupertokensConfig(
-        connection_uri="https://st-dev-fa72a220-3f68-11ef-bc8e-65def744e887.aws.supertokens.io",
-        api_key="zYFhwyhtP2QbI=hHsknG7D-e3X",
+        connection_uri=config["SUPERTOKENCONNECTIONURI"],
+        api_key=config["SUPERTOKENAPIKEY"],
     ),
     framework='fastapi',
     recipe_list=[
