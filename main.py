@@ -13,14 +13,14 @@ config = dotenv_values(".env")
 init(
     app_info=InputAppInfo(
         app_name="authBackend",
-        api_domain=config["APIDOMAIN"],
-        website_domain=config["WEBSITEDOMAIN"],
+        api_domain="http://localhost:8000",
+        website_domain="http://localhost:3000",
         api_base_path="/auth",
         website_base_path="/auth"
     ),
     supertokens_config=SupertokensConfig(
-        connection_uri=config["SUPERTOKENCONNECTIONURI"],
-        api_key=config["SUPERTOKENAPIKEY"],
+        connection_uri="https://st-dev-fa72a220-3f68-11ef-bc8e-65def744e887.aws.supertokens.io",
+        api_key="zYFhwyhtP2QbI=hHsknG7D-e3X",
     ),
     framework='fastapi',
     recipe_list=[
