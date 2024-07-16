@@ -6,6 +6,6 @@ config = dotenv_values(".env")
 
 
 def connect_mongodb(app) :
-    app.mongodb_client = MongoClient(config["MONGOURI"])
-    app.database = app.mongodb_client[config["DB_NAME"]]
+    app.mongodb_client = MongoClient("mongodb+srv://varun:varun@cluster0.lsfxn8q.mongodb.net/")
+    app.database = app.mongodb_client["appName=techStackStaging"]
     return "db connected sucessfully"
