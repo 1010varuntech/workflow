@@ -64,7 +64,19 @@ class Workflow(BaseModel):
                 "workFlowServiceName": "Linkedin",
                 "variables": None,
                 "endGoal": "user will be logged in",
-                "actionsToPerform": [],
+                "actionsToPerform": [{
+                "_id": "123654789",
+                "description": "this action is used to locate the button",
+                "toolUrl": "http://example.com",
+                "action": {
+                    "type": "click",
+                    "value": None
+                },
+                "elamPath": "sample path",
+                "elemClass": "div",
+                "elemId": "button",
+                "actionType": "user"
+            }],
             }
         }
 
