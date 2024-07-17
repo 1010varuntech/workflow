@@ -13,6 +13,8 @@ class ActionTypeEnum(str, Enum):
     click = "click"
     input = "input"
     select = "select"
+    submit = "submit"
+    type = "type"
 
 class ActionDetail(BaseModel):
     type: ActionTypeEnum
