@@ -2,6 +2,7 @@ from models.workflow import Workflow, WorkflowUpdate, Action
 from fastapi import Request, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from supertokens_python.recipe.session import SessionContainer
+from typing import Optional
 
 
 def get_collection(request: Request) :
@@ -26,8 +27,11 @@ def get_workflow(request: Request, workflow_name: str) :
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Workflow with name {workflow_name} not found")
     return workflow
 
-def get_all_workflows(request: Request, serviceName: str) :
-    workflows = list(get_collection(request).find({"workFlowServiceName": serviceName}))
+def get_all_workflows(request: Request, serviceName: Optional[str] = None):
+    if serviceName:
+        workflows = list(get_collection(request).find({"workFlowServiceName": serviceName}))
+    else:
+        workflows = list(get_collection(request).find({}))
     return workflows
 
 def update_workflow(request: Request, workFlowName: str, workFlow: WorkflowUpdate, session: SessionContainer) :

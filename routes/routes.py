@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, status
-from typing import List
+from typing import List, Optional
 from models.workflow import Workflow, WorkflowUpdate, Action
 from controllers.controller import *
 from supertokens_python.recipe.session.framework.fastapi import verify_session
@@ -16,8 +16,8 @@ def create(request: Request, workflow: Workflow, session: SessionContainer = Dep
 def find_workflow(request: Request, workflowname: str, session: SessionContainer = Depends(verify_session())):
     return get_workflow(request, workflowname)
 
-@router.get("/all/{serviceName}", response_description="get all workflows", status_code=status.HTTP_200_OK, response_model=List[Workflow])
-def find_workflows(request: Request, serviceName: str, session: SessionContainer = Depends(verify_session())):
+@router.get("/all", response_description="Get all workflows or workflows for a particular service", status_code=status.HTTP_200_OK, response_model=List[Workflow])
+def find_workflows(request: Request, serviceName: Optional[str] = None, session: SessionContainer = Depends(verify_session())):
     return get_all_workflows(request, serviceName)
     
 @router.put("/update/{workflowname}", response_description="update workflow", status_code=status.HTTP_200_OK, response_model=WorkflowUpdate)

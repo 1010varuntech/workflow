@@ -33,6 +33,7 @@ class Action(BaseModel):
         json_schema_extra = {
             "example": {
                 "_id": "123654789",
+                "actionTitle": "Locate button",
                 "description": "this action is used to locate the button",
                 "toolUrl": "http://example.com",
                 "action": {
@@ -66,6 +67,7 @@ class Workflow(BaseModel):
                 "endGoal": "user will be logged in",
                 "actionsToPerform": [{
                 "_id": "123654789",
+                "actionTitle": "Locate button",
                 "description": "this action is used to locate the button",
                 "toolUrl": "http://example.com",
                 "action": {
