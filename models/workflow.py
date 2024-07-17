@@ -35,11 +35,14 @@ class Action(BaseModel):
                 "_id": "123654789",
                 "description": "this action is used to locate the button",
                 "toolUrl": "http://example.com",
-                "action": ActionDetail,
+                "action": {
+                    "type": "click",
+                    "value": None
+                },
                 "elamPath": "sample path",
                 "elemClass": "div",
                 "elemId": "button",
-                "actionType": ActionType
+                "actionType": "user"
             }
         }
 
