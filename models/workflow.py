@@ -11,10 +11,10 @@ class ActionType(str, Enum):
 class ActionTypeEnum(str, Enum):
     scroll = "scroll"
     click = "click"
-    input = "input"
-    select = "select"
     submit = "submit"
     type = "type"
+    fill = "fill"
+    clickOver = "clickOver"
 
 class ActionDetail(BaseModel):
     type: ActionTypeEnum
