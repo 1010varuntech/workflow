@@ -1,4 +1,4 @@
-from models.workflow import Workflow, WorkflowUpdate, Action
+from models.workflow import Workflow, WorkflowUpdate, Action, ActionUpdate
 from fastapi import Request, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from supertokens_python.recipe.session import SessionContainer
@@ -21,10 +21,10 @@ def create_workflow(request: Request, workflow: Workflow, session: SessionContai
     created_workflow = get_collection(request).find_one({"_id": new_workflow.inserted_id})
     return created_workflow
 
-def get_workflow(request: Request, workflow_name: str) :
-    workflow = get_collection(request).find_one({"workFlowName": workflow_name})
+def get_workflow(request: Request, workflow_id: str) :
+    workflow = get_collection(request).find_one({"_id": workflow_id})
     if not workflow:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Workflow with name {workflow_name} not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Workflow with name {workflow_id} not found")
     return workflow
 
 def get_all_workflows(request: Request, serviceName: Optional[str] = None):
@@ -34,19 +34,19 @@ def get_all_workflows(request: Request, serviceName: Optional[str] = None):
         workflows = list(get_collection(request).find({}))
     return workflows
 
-def update_workflow(request: Request, workFlowName: str, workFlow: WorkflowUpdate, session: SessionContainer) :
+def update_workflow(request: Request, workFlowId: str, workFlow: WorkflowUpdate, session: SessionContainer) :
     user_id = session.get_user_id()
     user_role = get_user_collection(request).find_one({"userId": user_id})["role"]
     if(user_role != "admin") :
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Only admins can access this route")
     workFlow = jsonable_encoder(workFlow)
     update_result = get_collection(request).update_one(
-        {"workFlowName": workFlowName}, {"$set": workFlow}
+        {"_id": workFlowId}, {"$set": workFlow}
     )
     if update_result.modified_count == 0:
         raise HTTPException(status_code=404, detail="Workflow not found")
     else :
-        updated_workflow = get_collection(request).find_one({"workFlowName": workFlowName})
+        updated_workflow = get_collection(request).find_one({"_id": workFlowId})
         return updated_workflow
 
 def delete_workflow(request: Request, workFlowId: str, session: SessionContainer):
@@ -71,4 +71,33 @@ def append_action(request: Request, workflow_id: str, action: Action, session: S
     if update_result.modified_count == 0:
         raise HTTPException(status_code=404, detail="Workflow not found")
     updated_workflow = get_collection(request).find_one({"_id": workflow_id})
+    return updated_workflow
+
+def update_action(request: Request, workflow_id: str, action_id: str, action_update: ActionUpdate, session: SessionContainer):
+    user_id = session.get_user_id()
+    user_role = get_user_collection(request).find_one({"userId": user_id})["role"]
+    if(user_role != "admin") :
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Only admins can access this route")
+    workflow = get_collection(request).find_one({"_id": workflow_id})
+    if not workflow:
+        raise HTTPException(status_code=404, detail="Workflow not found")
+
+    actions = workflow.get("actionsToPerform", [])
+    action_index = next((index for (index, action) in enumerate(actions) if action["_id"] == action_id), None)
+    
+    if action_index is None:
+        raise HTTPException(status_code=404, detail="Action not found")
+    
+    updated_action_data = {**actions[action_index], **action_update.dict(exclude_unset=True)}
+    actions[action_index] = updated_action_data
+
+    update_result = get_collection(request).update_one(
+        {"_workFlowId": workflow_id},
+        {"$set": {"actionsToPerform": actions}}
+    )
+    
+    if update_result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Failed to update action")
+
+    updated_workflow = get_collection(request).find_one({"_workFlowId": workflow_id})
     return updated_workflow

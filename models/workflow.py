@@ -49,6 +49,34 @@ class Action(BaseModel):
             }
         }
 
+class ActionUpdate(BaseModel):
+    actionTitle: Optional[str] = None
+    description: Optional[str] = None
+    toolUrl: Optional[str] = None
+    action: Optional[ActionDetail] = None
+    elemPath: Optional[str] = None
+    eleClass: Optional[str] = None
+    eleId: Optional[str] = None
+    actionType: Optional[ActionType] = None
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "_id": "123654789",
+                "actionTitle": "Locate button",
+                "description": "this action is used to locate the button",
+                "toolUrl": "http://example.com",
+                "action": {
+                    "type": "click",
+                    "value": None
+                },
+                "elamPath": "sample path",
+                "elemClass": "div",
+                "elemId": "button",
+                "actionType": "user"
+            }
+        }
+
 class Workflow(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
     workFlowName: str
